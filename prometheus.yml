@@ -1,0 +1,95 @@
+---
+- name: Install Prometheus Server
+  hosts: your_server_hostname
+  become: true
+  vars:
+    prometheus_version: 2.42.0
+    prometheus_user: prometheus
+    prometheus_user_home: /home/{{ prometheus_user }}
+    prometheus_install_dir: /usr/local/bin
+    prometheus_conf_dir: /etc/prometheus
+    prometheus_data_dir: /var/lib/prometheus
+    prometheus_monitor_dir: /monitoring/prometheus
+    prometheus_rules_dir: "{{ prometheus_conf_dir }}/rules"
+    prometheus_service_file: /etc/systemd/system/prometheus.service
+    prometheus_config_file: "{{ prometheus_conf_dir }}/prometheus.yml"
+    prometheus_source_url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+    prometheus_extracted_dir: prometheus-files
+
+  tasks:
+    - name: Create Prometheus user
+      user:
+        name: "{{ prometheus_user }}"
+        shell: /bin/false
+        system: true
+        createhome: no
+
+    - name: Create required directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_user }}"
+      with_items:
+        - "{{ prometheus_conf_dir }}"
+        - "{{ prometheus_data_dir }}"
+        - "{{ prometheus_monitor_dir }}"
+        - "{{ prometheus_monitor_dir }}/prometheus-data"
+        - "{{ prometheus_rules_dir }}"
+
+    - name: Download Prometheus source
+      get_url:
+        url: "{{ prometheus_source_url }}"
+        dest: "{{ prometheus_user_home }}/prometheus.tar.gz"
+
+    - name: Extract Prometheus source
+      unarchive:
+        src: "{{ prometheus_user_home }}/prometheus.tar.gz"
+        dest: "{{ prometheus_user_home }}/{{ prometheus_extracted_dir }}"
+        remote_src: true
+        creates: "{{ prometheus_user_home }}/{{ prometheus_extracted_dir }}"
+
+    - name: Copy Prometheus binaries
+      copy:
+        src: "{{ prometheus_user_home }}/{{ prometheus_extracted_dir }}/prometheus"
+        dest: "{{ prometheus_install_dir }}/prometheus"
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_user }}"
+        mode: 0755
+
+    - name: Copy Prometheus tool binaries
+      copy:
+        src: "{{ prometheus_user_home }}/{{ prometheus_extracted_dir }}/promtool"
+        dest: "{{ prometheus_install_dir }}/promtool"
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_user }}"
+        mode: 0755
+
+    - name: Copy Prometheus consoles and console_libraries
+      copy:
+        src: "{{ prometheus_user_home }}/{{ prometheus_extracted_dir }}/consoles"
+        dest: "{{ prometheus_conf_dir }}/consoles"
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_user }}"
+        mode: 0755
+
+    - name: Copy Prometheus console_libraries
+      copy:
+        src: "{{ prometheus_user_home }}/{{ prometheus_extracted_dir }}/console_libraries"
+        dest: "{{ prometheus_conf_dir }}/console_libraries"
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_user }}"
+        mode: 0755
+
+    - name: Create Prometheus configuration file
+      copy:
+        content: |
+          global:
+            external_labels:
+              region: kl-sentul
+              monitor: infra
+
+          rule_files:
+            - /etc/prometheus/rules/host_rules.yml
+
+         

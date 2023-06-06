@@ -1,0 +1,103 @@
+#!/bin/sh
+#
+# pushgateway     Start/Stop the Prometheus Pushgateway
+#
+# chkconfig: 345 99 10
+# description: Prometheus Pushgateway
+# processname: pushgateway
+# pidfile: /var/run/pushgateway.pid
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Path to the pushgateway binary
+PUSHGATEWAY_BIN="/usr/local/bin/pushgateway --web.listen-address=:9108"
+
+
+# Process name
+PUSHGATEWAY_NAME="pushgateway"
+
+# PID file path
+PID_FILE="/var/run/pushgateway.pid"
+
+# Start the pushgateway service
+start() {
+    echo -n "Starting $PUSHGATEWAY_NAME: "
+    if [ -f "$PID_FILE" ]; then
+        if checkpid $(cat "$PID_FILE"); then
+            echo "already running."
+            exit 1
+        else
+            rm -f "$PID_FILE"
+        fi
+    fi
+    daemon --pidfile="$PID_FILE" "$PUSHGATEWAY_BIN"
+    echo "done."
+}
+
+# Stop the pushgateway service
+stop() {
+    echo -n "Stopping $PUSHGATEWAY_NAME: "
+    if [ -f "$PID_FILE" ]; then
+        if checkpid $(cat "$PID_FILE"); then
+            killproc -p "$PID_FILE" "$PUSHGATEWAY_NAME"
+            echo "done."
+        else
+            echo "not running."
+        fi
+        rm -f "$PID_FILE"
+    else
+        echo "not running."
+    fi
+}
+
+# Check the status of the pushgateway service
+status() {
+    echo -n "Status of $PUSHGATEWAY_NAME: "
+    if [ -f "$PID_FILE" ]; then
+        if checkpid $(cat "$PID_FILE"); then
+            echo "running."
+            exit 0
+        else
+            echo "not running."
+            exit 1
+        fi
+    else
+        echo "not running."
+        exit 3
+    fi
+}
+
+# Restart the pushgateway service
+restart() {
+    stop
+    sleep 1
+    start
+}
+
+# Usage function
+usage() {
+    echo "Usage: $0 {start|stop|status|restart}"
+    exit 2
+}
+
+# Check command line arguments
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        usage
+        ;;
+esac
+
+exit $?

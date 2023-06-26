@@ -4,6 +4,8 @@
 
 # Define variables
 PROMETHEUS_URL="http://localhost:9090"
+USERNAME="admin"
+PASSWORD="3ZAEMPLq4r40RXs"
 SNAPSHOT_API_ENDPOINT="${PROMETHEUS_URL}/api/v1/admin/tsdb/snapshot"
 BACKUP_DIR="/path/to/backup/directory"
 
@@ -15,8 +17,8 @@ TIMESTAMP=$(date +%Y%m%d%H%M%S)
 SNAPSHOT_NAME="snapshot-${TIMESTAMP}"
 SNAPSHOT_PATH="${BACKUP_DIR}/${SNAPSHOT_NAME}"
 
-# Trigger snapshot creation using cURL
-SNAPSHOT_RESPONSE=$(curl -s -XPOST "${SNAPSHOT_API_ENDPOINT}")
+# Trigger snapshot creation using cURL with username and password
+SNAPSHOT_RESPONSE=$(curl -s -XPOST --user "${USERNAME}:${PASSWORD}" "${SNAPSHOT_API_ENDPOINT}")
 
 # Extract snapshot details from the API response
 SNAPSHOT_NAME=$(echo "${SNAPSHOT_RESPONSE}" | jq -r '.data.name')

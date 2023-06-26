@@ -1,0 +1,29 @@
+---
+- name: Upgrade node_exporter on remote RHEL 7.9 server - Sonu
+  hosts: servers
+  remote_user: itops
+  become: true
+  become_user: root
+  become_method: sudo
+
+  vars:
+    node_exporter_version: latest
+    node_exporter_source_path: /home/itops/sonu/node_exporter
+
+  tasks:
+    - name: Stop node_exporter service
+      service:
+        name: node_exporter
+        state: stopped
+
+    - name: Copy node_exporter binary
+      copy:
+        src: "{{ node_exporter_source_path }}"
+        dest: /usr/local/bin/node_exporter
+        mode: '0755'
+
+    - name: Start node_exporter service
+      service:
+        name: node_exporter
+        state: started
+        enabled: true

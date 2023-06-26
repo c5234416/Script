@@ -1,0 +1,120 @@
+  - alert: LogErrorOutOfMemmory
+    expr: system_log_out_of_memory >=1
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "OutOfMemmory error in {{ $labels.instance }}"
+      description: "OutOfMemmory error in {{ $labels.instance }} /var/log/messages."
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: LogErrorKernelPanic
+    expr: system_log_kernel_panic >=1
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Kernel Panic error in {{ $labels.instance }}"
+      description: "Kernel Panic error in {{ $labels.instance }} /var/log/messages."
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: LogErrorOops
+    expr: system_log_oops >=1
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Oops error in {{ $labels.instance }}"
+      description: "Oops error in {{ $labels.instance }} /var/log/messages."
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: LogErrorOpenais
+    expr: system_log_openais >=1
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Openais error in {{ $labels.instance }}"
+      description: "Openais error in {{ $labels.instance }} /var/log/messages."
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: LogErrorRejected
+    expr: system_log_rejected >=1
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rejected error in {{ $labels.instance }}"
+      description: "Rejected error in {{ $labels.instance }} /var/log/messages."
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: LogErrorSegfault
+    expr: system_log_segfault >=1
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Segfault error in {{ $labels.instance }}"
+      description: "Segfault error in {{ $labels.instance }} /var/log/messages."
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: LogErrorSegmentation
+    expr: system_log_segmentation >=1
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Segmentation error in {{ $labels.instance }}"
+      description: "Segmentation error in {{ $labels.instance }} /var/log/messages."
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: LogErrorExpired
+    expr: secure_log_expired >=1
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Expired error in {{ $labels.instance }}"
+      description: "Expired error in {{ $labels.instance }} /var/log/secure."
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: AideFileAdded
+    expr: aide_file_changes_added >=1
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Aide files added in {{ $labels.instance }}"
+      description: "Aide file added in {{ $labels.instance }}. Verify the added files"
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: AideFileChanged
+    expr: aide_file_changes_changed >=1
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Aide files changed in {{ $labels.instance }}"
+      description: "Aide file changed in {{ $labels.instance }}. Verify the changed file"
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: AideFileRemoved
+    expr: aide_file_changes_removed >=1
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Aide files removed in {{ $labels.instance }}"
+      description: "Aide file removed in {{ $labels.instance }}. Verify the removed files"
+      team: IT-IOE-LINUX
+      runbook_url: https://runbooks.prometheus-operator.dev/

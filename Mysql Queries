@@ -1,0 +1,45 @@
+SELECT
+    SUM(CASE WHEN message LIKE '%HostCpuHighIowait%' THEN 1 ELSE 0 END) AS CpuHighIowait,
+    SUM(CASE WHEN message LIKE '%/var/log/messages%' THEN 1 ELSE 0 END) AS ErrorLogs,
+    SUM(CASE WHEN message LIKE '%HostNetworkReceiveErrors%' THEN 1 ELSE 0 END) AS NetworkErrors,
+    SUM(CASE WHEN message LIKE '%Ext-AIDE%' THEN 1 ELSE 0 END) AS AIDE_Alerts,
+    SUM(CASE WHEN message LIKE '%HostOutOfDiskSpace%' THEN 1 ELSE 0 END) AS Disk_Errors
+FROM report where createdAt between {{from}} and {{to}};
+
+
+WindowsServerCollectorError
+WindowsServerDiskSpaceUsage
+HostOutOfDiskSpace
+HostNetworkInterfaceSaturated
+WindowsServiceCybereasoncrsDown
+WindowsServerServiceStatus
+WindowsServerMemoryUsage
+
+
+
+- name: capacity_alerts
+  rules:
+  - alert: HighMajorFaults
+    expr: rate(node_vmstat_pgmajfault[5m]) > 10
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High major faults on {{ $labels.instance }}"
+      description: "The server {{ $labels.instance }} of job {{ $labels.job }} is experiencing a high rate of major faults."
+      team: IT-IOE-CAPACITY
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: HighPageOutRate
+    expr: rate(node_vmstat_pgpgout[5m]) > 1000
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High page out rate on {{ $labels.instance }}"
+      description: "The server {{ $labels.instance }}  from the project {{ $labels.job }} is experiencing a high rate of page outs."
+      team: IT-IOE-CAPACITY
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+
+

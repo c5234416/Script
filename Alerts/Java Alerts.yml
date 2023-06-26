@@ -1,0 +1,144 @@
+- name: java_alerts
+  rules:
+  - alert: JvmMemoryFillingUp
+    expr: (sum by (instance)(jvm_memory_used_bytes{area="heap"}) / sum by (instance)(jvm_memory_max_bytes{area="heap"})) * 100 > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: JVM memory filling up (instance {{ $labels.instance }})
+      description: "JVM memory is filling up (> 80%)\n  VALUE = {{ $value |humanize }}\n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: URLIsDown
+    expr: probe_success{job!~"LakeShore_URLs",instance!~"https://alfresco.yes.my/share/page",instance!~"https://integration.yes.my",instance!~"https://penangwifi.yes.my",instance!~"https://ussp.yes.my/",instance!~"https://ycommslogin.yes.my/ycommslogin/"} == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: Web URL is Down (instance {{ $labels.instance }})
+      description: "Website API URL is Down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      team: IT-IOE-LINUX
+
+  - alert: JavaLogReadTimedOut
+    expr: java_log_read_timed_out > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: Read timed out errors detected for (instance {{ $labels.instance }})
+      description: "Read timed out errors detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogNewClusterView
+    expr: java_log_new_cluster_view > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: New Cluster View detected for (instance {{ $labels.instance }})
+      description: "New Cluster View detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogNewDiscardedMessages
+    expr: java_log_discarded_messages > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: Discarded Messages detected for (instance {{ $labels.instance }})
+      description: "Discarded Messages from non-member detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogNewBuildSVNTag
+    expr: java_log_build_svntag > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: Build SVN Tag detected for (instance {{ $labels.instance }})
+      description: "Build SVN Tag detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogSocketTimeoutException
+    expr: java_log_socket_timeout > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: SocketTimeoutException detected for (instance {{ $labels.instance }})
+      description: "SocketTimeoutException detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogOutOfMemoryError
+    expr: java_log_javalang_outofmemory > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: OutOfMemoryError detected for (instance {{ $labels.instance }})
+      description: "OutOfMemoryError has occurred in  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogUnknownHostException
+    expr: java_log_javanet_unknownhost > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: UnknownHostException detected for (instance {{ $labels.instance }})
+      description: "java.net.UnknownHostException detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogCommunicationsException
+    expr: java_log_jdbc_communications > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: CommunicationsException detected for (instance {{ $labels.instance }})
+      description: "jdbc4.CommunicationsException detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogUbabletoLoadSchema
+    expr: java_log_unableto_loadschema > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: Unable to load schema for (instance {{ $labels.instance }})
+      description: "Unable to load schema error detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogServiceUnavailableException
+    expr: java_log_service_unavailable > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: ServiceUnavailableException detected for (instance {{ $labels.instance }})
+      description: "ServiceUnavailableException detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+
+  - alert: JavaLogServiceUnavailableException
+    expr: java_log_service_unavailable > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: ServiceUnavailableException detected for (instance {{ $labels.instance }})
+      description: "ServiceUnavailableException detected for  {{ $labels.instance }} of job {{ $labels.job }}. \n  LABELS = {{ $labels }}"
+      team: IT-IOE-MIDDLEWARE
+      runbook_url: https://runbooks.prometheus-operator.dev/
+

@@ -1,0 +1,24 @@
+#!/bin/bash
+# MySQL YCMS Queue Status I Records -Sonu
+# Threshold - Warning =150 and Critical=200
+
+# MySQL Credentials
+username=nagiosuser
+password="Xwefr&mce(8Na12"
+
+# MySQL Command. Remember testname should not contain any space
+command="SELECT   a.\`PROCESS_STATUS\`,  COUNT(*) FROM  ytlc_queue_ycms.\`QUEUE_DATA\` a WHERE DATE(a.\`CREATED_DATE\`) = CURRENT_DATE()   AND a.\`SOURCE\` NOT IN ('PARTNER_SERVICE') and a.PROCESS_STATUS='I' GROUP BY 1 ;"
+
+## Static variables & calculations
+mysql=$(which mysql)
+woot=$($mysql --defaults-extra-file=/opt/scripts/mysql/mysql.conf --batch -N --silent -e "$command" | awk '{print $2}')
+
+# Push metrics to Prometheus Pushgateway
+pushgateway_url="http://localhost:9108/metrics/job/mysql_custom"
+instance=$(hostname -I | awk '{print $1}') # Set instance IP as the script is running on the same machine
+
+# Format the metrics data
+metrics_data="mysql_ycmsqueue_irecords{instance=\"$instance\", type=\"ycmsqueue_irecords\"} $woot"
+
+# Push the metrics using cURL
+echo -e "$metrics_data" | curl -X POST --data-binary @- "$pushgateway_url"
